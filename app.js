@@ -2,56 +2,46 @@ const express = require("express");
 const app = express();
 
 app.use(express.json());
+let words = {
+  classroom: "анги",
+  guy: "залуу",
+  ladie: "бүсгүй",
+  book: "ном",
+  food: "хоол",
+  phone: "утас",
+  dialogue: "харилцан яриа",
+};
 
-var users = [
-  {
-    name: "Tuugii",
-    email: "tuugii.1980.b@gmail.com",
-    password: "password12345",
-  },
-  {
-    name: "Bataa",
-    email: "bataa.1980.b@gmail.com",
-    password: "password12345",
-  },
-  {
-    name: "Nasaa",
-    email: "nasaa.1980.b@gmail.com",
-    password: "password12345",
-  },
-];
-
-app.get("/", (req, res) => {
-  res.send("hello");
+app.get("/:name", (req, res) => {
+  if (words[req.params.name]) {
+    res.send("translation : " + words[req.params.name]);
+  } else {
+    res.send("word not found");
+  }
 });
 
-app.get("/greet/:name", (req, res) => {
-  res.send("Hello, " + req.params.name);
+app.post("/add_word", (req, res) => {
+  words = { ...words, ...req.body };
+  console.log(words);
+  res.send("Added a word");
 });
 
-app.post("/user", (req, res) => {
-  users.push(req.body);
-  console.log(users);
-  res.send("user created");
-});
-
-
-app.delete("/user", (req, res) => {
-  for (let i = 0; i <= users.length; i++) {
-    if (users[i].email === req.body.email) {
-      // delete users[i]
-      users.splice(i, 1);
-      break;
+app.put("/edit_word", (req, res) => {
+  for (let word in words) {
+    for (let newWord in req.body) {
+      if (word === newWord) {
+        words[word] = req.body[newWord];
+      }
     }
   }
-  res.send(users);
+  res.send("Words edited");
 });
 
+app.delete("/delete_word", (req, res) => {
+  delete words[Object.keys(req.body)]
+  res.send( words);
+});
 
 app.listen(3000, () => {
   console.log("servers is running");
 });
-
-
-
-
